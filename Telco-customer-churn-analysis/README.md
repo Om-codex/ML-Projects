@@ -44,8 +44,7 @@ The goal is to build a **binary classification model** that predicts churn (`Yes
 |-----------|------------------|
 | Data Analysis | `pandas`, `numpy` |
 | Visualization | `matplotlib`, `seaborn` |
-| Modeling | `scikit-learn`, `xgboost` |
-| Explainability | `SHAP` |
+| Modeling | `scikit-learn`, `LogisticRegression` |
 | Environment | `Jupyter Notebook`, `Python 3.10+` |
 
 ---
@@ -77,22 +76,51 @@ The goal is to build a **binary classification model** that predicts churn (`Yes
   - Confusion Matrix
 
 ### 4️⃣ Model Evaluation
-| Model | Accuracy | Precision | Recall | F1 Score | ROC-AUC |
-|-------|-----------|------------|---------|-----------|----------|
-| Logistic Regression | 80.2% | 74.5% | 66.3% | 70.2% | 0.84 |
-| Random Forest | 82.9% | 78.6% | 70.1% | 74.1% | 0.87 |
-| XGBoost | **84.1%** | **79.2%** | **72.8%** | **75.9%** | **0.89** |
 
-✅ **Final Model:** XGBoost – best balance between recall and ROC-AUC.
+| Model | Accuracy | Precision | Recall | F1 Score |
+|--------|-----------|------------|---------|-----------|
+| Gradient Boosting Classifier | 0.817 | 0.695 | 0.552 | 0.616 |
+| Logistic Regression | 0.807 | 0.656 | 0.572 | 0.611 |
+| Voting Classifier | 0.817 | 0.718 | 0.507 | 0.595 |
+| Random Forest Classifier | 0.801 | 0.660 | 0.516 | 0.579 |
+| XGBoost | 0.789 | 0.619 | 0.529 | 0.570 |
+| AdaBoost Classifier | 0.801 | 0.667 | 0.497 | 0.569 |
+| Support Vector Classifier (SVC) | 0.798 | 0.660 | 0.490 | 0.563 |
+| K-Nearest Neighbors (KNN) | 0.767 | 0.565 | 0.533 | 0.548 |
+| Decision Tree Classifier | 0.731 | 0.494 | 0.501 | 0.497 |
 
-### 5️⃣ Model Explainability (SHAP)
-- Used SHAP (SHapley Additive exPlanations) to interpret model predictions.
-- **Top Features Influencing Churn:**
-  - Contract Type  
-  - Tenure  
-  - Monthly Charges  
-  - Internet Service  
-  - Online Security
+### 4️⃣ Model Performance after Hyperparameter Tuning
+
+| Model                     | Best Parameters                                                                                  | Recall Score (CV) |
+|----------------------------|--------------------------------------------------------------------------------------------------|-------------------|
+| SVC                        | {'C': 0.1, 'gamma': 'scale', 'kernel': 'linear'}                                                | 0.840             |
+| Logistic Regression         | {'C': 0.01, 'max_iter': 300, 'penalty': 'l1', 'solver': 'liblinear'}                           | 0.827             |
+| Decision Tree               | {'criterion': 'entropy', 'max_depth': 5, 'min_samples_leaf': 1, 'min_samples_split': 2}        | 0.789             |
+| Random Forest               | {'max_depth': 10, 'min_samples_leaf': 5, 'min_samples_split': 2, 'n_estimators': 100}          | 0.755             |
+| K-Nearest Neighbors (KNN)   | {'n_neighbors': 7, 'p': 1, 'weights': 'uniform'}                                               | 0.539             |
+| Gradient Boosting           | {'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 100, 'subsample': 0.8}                 | 0.516             |
+| AdaBoost                    | {'learning_rate': 1.0, 'n_estimators': 300}                                                    | 0.511             |
+
+
+✅ **Final Model:** Logistic Regression with High Recall Value & Better Metrics than SVC.
+| Metric                | Score  |
+|------------------------|--------|
+| **Accuracy**           | 0.7189 |
+| **Precision**          | 0.482  |
+| **Recall**             | 0.8009 |
+| **F1-Score**           | 0.6018 |
+
+**Classification Report**
+
+| Class | Precision | Recall | F1-Score | Support |
+|--------|------------|---------|-----------|----------|
+| 0 | 0.91 | 0.69 | 0.78 | 1294 |
+| 1 | 0.48 | 0.80 | 0.60 | 467 |
+| **Accuracy** |  |  | **0.72** | **1761** |
+| **Macro Avg** | 0.69 | 0.75 | 0.69 | 1761 |
+| **Weighted Avg** | 0.79 | 0.72 | 0.73 | 1761 |
+
+
 
 💡 **Business Insight:**  
 Customers with **month-to-month contracts**, **short tenure**, and **high charges** are at highest churn risk.  
@@ -100,23 +128,11 @@ These customers should be **targeted for loyalty discounts** or **contract upgra
 
 ---
 
-## 📈 Key Visualizations
-
-| Visualization | Description |
-|----------------|-------------|
-| 📊 Churn Distribution | Shows % of customers who churned |
-| 🔥 Correlation Heatmap | Highlights relationships between features |
-| 🌈 Feature Importance | Shows top predictors of churn |
-| 🧩 SHAP Summary Plot | Explains model’s global feature impact |
-| 🎯 Confusion Matrix | Displays model performance visually |
-
----
 
 ## 💡 Results Summary
 
-- Achieved **84% accuracy** and **ROC-AUC of 0.89** using XGBoost.
+- Achieved **71% accuracy** and **High Recall Value of 0.80** using Logistic Regression.
 - Identified key churn indicators leading to **actionable business strategies**.
-- Used **SHAP explainability** for transparent and trustable predictions.
 
 ---
 
@@ -134,19 +150,14 @@ These customers should be **targeted for loyalty discounts** or **contract upgra
 Telco-Customer-Churn/
 │
 ├── data/
-│ └── Telco-Customer-Churn.csv
+│ └── customer-churn.csv
 │
 ├── notebooks/
 │ └── Telco-customer-churn-prediction.ipynb
 │
-├── src/
-│ ├── preprocessing.py
-│ ├── model_training.py
-│ └── evaluation.py
-│
 ├── README.md
 ├── requirements.txt
-└── churn_model.pkl
+└── final_log_reg.pkl
 
 
 ---
